@@ -2,19 +2,19 @@
 <html lang="ru">
 <head>
   <base href="/">
-  <title>@yield('title') - ГеймсМаркет</title>
+  <title>{{$title_page}} - ГеймсМаркет</title>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <link rel="stylesheet" href="css/libs.min.css">
-  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="{{asset('css/libs.min.css')}}">
+  <link rel="stylesheet" href="{{asset('css/main.css')}}">
 </head>
 <body>
 <div class="main-wrapper">
   <header class="main-header">
     <div class="logotype-container">
       <a href="/" class="logotype-link">
-        <img src="img/logo.png" alt="Логотип">
+        <img src="{{asset('img/logo.png')}}" alt="Логотип">
       </a>
     </div>
     <nav class="main-navigation">
@@ -22,20 +22,21 @@
         <li class="nav-list__item">
           <a href="/" class="nav-list__item__link">Главная</a>
         </li>
+        @if (Auth::check())
         <li class="nav-list__item">
-          <a href="#" class="nav-list__item__link">Мои заказы</a>
+          <a href="/orders" class="nav-list__item__link">Мои заказы</a>
         </li>
+        @endif
         <li class="nav-list__item">
-          <a href="#" class="nav-list__item__link">Новости</a>
-        </li>
-        <li class="nav-list__item">
-          <a href="#" class="nav-list__item__link">О компании</a>
+        @if (Auth::User() && Auth::User()->role_id == 2)
+          <a href="/admin" class="nav-list__item__link">Админка</a>
+        @endif
         </li>
       </ul>
     </nav>
     <div class="header-contact">
       <div class="header-contact__phone">
-        <a href="#" class="header-contact__phone-link">Телефон: 33-333-33</a>
+        <a href="tel:3333333" class="header-contact__phone-link">Телефон: 33-333-33</a>
       </div>
     </div>
     <div class="header-container">
@@ -57,7 +58,7 @@
         <a href="{{ route('register') }}" class="authorization-block__link">Регистрация</a>
         <a href="{{ route('login') }}" id="login" class="authorization-block__link">Войти</a>
         @else
-          {{ Auth::user()->name }}
+          {{ Auth::User()->name }}
           <a href="{{ route('logout') }}" id="logout">
             Выход
           </a>
@@ -74,21 +75,11 @@
         <div class="sidebar-item__title">Категории</div>
         <div class="sidebar-item__content">
           <ul class="sidebar-category">
-            <li class="sidebar-category__item">
-              <a href="#" class="sidebar-category__item__link">Action</a>
-            </li>
-            <li class="sidebar-category__item">
-              <a href="#" class="sidebar-category__item__link">RPG</a>
-            </li>
-            <li class="sidebar-category__item">
-              <a href="#" class="sidebar-category__item__link">Квесты</a>
-            </li>
-            <li class="sidebar-category__item">
-              <a href="#" class="sidebar-category__item__link">Онлайн-игры</a>
-            </li>
-            <li class="sidebar-category__item">
-              <a href="#" class="sidebar-category__item__link">Стратегии</a>
-            </li>
+            @foreach($categories as $category)
+              <li class="sidebar-category__item">
+                <a href="/category/{{$category->id}}" class="sidebar-category__item__link">{{$category->name}}</a>
+              </li>
+            @endforeach
           </ul>
         </div>
       </div>
@@ -98,7 +89,7 @@
           <div class="sidebar-news">
             <div class="sidebar-news__item">
               <div class="sidebar-news__item__preview-news">
-                <img src="img/cover/game-2.jpg" alt="image-new" class="sidebar-new__item__preview-new__image">
+                <img src="{{asset('img/cover/game-2.jpg')}}" alt="image-new" class="sidebar-new__item__preview-new__image">
               </div>
               <div class="sidebar-news__item__title-news">
                 <a href="#" class="sidebar-news__item__title-news__link">О
@@ -107,7 +98,7 @@
             </div>
             <div class="sidebar-news__item">
               <div class="sidebar-news__item__preview-news">
-                <img src="img/cover/game-1.jpg" alt="image-new" class="sidebar-new__item__preview-new__image">
+                <img src="{{asset('img/cover/game-1.jpg')}}" alt="image-new" class="sidebar-new__item__preview-new__image">
               </div>
               <div class="sidebar-news__item__title-news">
                 <a href="#" class="sidebar-news__item__title-news__link">О
@@ -116,7 +107,7 @@
             </div>
             <div class="sidebar-news__item">
               <div class="sidebar-news__item__preview-news">
-                <img src="img/cover/game-4.jpg" alt="image-new" class="sidebar-new__item__preview-new__image">
+                <img src="{{asset('img/cover/game-4.jpg')}}" alt="image-new" class="sidebar-new__item__preview-new__image">
               </div>
               <div class="sidebar-news__item__title-news">
                 <a href="#" class="sidebar-news__item__title-news__link">О
@@ -133,13 +124,29 @@
           Steam игры после оплаты
         </div>
         <div class="slider">
-          <img src="img/slider.png" alt="Image" class="image-main">
+          <img src="{{asset('img/slider.png')}}" alt="Image" class="image-main">
         </div>
       </div>
       <div class="content-middle">
+        <div class="content-head__container">
+          <div class="content-head__title-wrap">
+            <div class="content-head__title-wrap__title bcg-title">{{$title}}</div>
+          </div>
+          <div class="content-head__search-block">
+            <div class="search-container">
+              <form class="search-container__form">
+                {{csrf_field()}}
+                <input type="text" class="search-container__form__input">
+                <button class="search-container__form__btn">search</button>
+              </form>
+            </div>
+          </div>
+        </div>
         @yield('content')
       </div>
-      <div class="content-bottom"></div>
+
+      <div class="content-bottom">
+      </div>
     </div>
   </div>
   <footer class="footer">
@@ -148,18 +155,20 @@
         <div class="random-product-container__head">Случайный товар</div>
         <div class="random-product-container__content">
           <div class="item-product">
-            <div class="item-product__title-product"><a href="#" class="item-product__title-product__link">The Witcher
-                3: Wild Hunt</a></div>
+            <div class="item-product__title-product">
+              <a href="/product/{{$rand_product->id}}" class="item-product__title-product__link">{{$rand_product->name}}</a>
+            </div>
             <div class="item-product__thumbnail">
-              <a href="#" class="item-product__thumbnail__link">
-                <img src="img/cover/game-1.jpg" alt="Preview-image" class="item-product__thumbnail__link__img"></a>
+              <a href="/product/{{$rand_product->id}}" class="item-product__thumbnail__link">
+                <img src="/{{$rand_product->photo}}" alt="Preview-image" class="item-product__thumbnail__link__img">
+              </a>
             </div>
             <div class="item-product__description">
               <div class="item-product__description__products-price">
-                <span class="products-price">400 руб</span>
+                <span class="products-price">{{$rand_product->price}}</span> руб.
               </div>
               <div class="item-product__description__btn-block">
-                <a href="#" class="btn btn-blue">Купить</a>
+                <a href="/product/{{$rand_product->id}}" class="btn btn-blue">Купить</a>
               </div>
             </div>
           </div>
@@ -200,6 +209,6 @@
   </footer>
 </div>
 <script src="js/jquery-3.2.1.min.js"></script>
-<script src="js/main.js"></script>
+<script src="{{asset('js/main.js')}}"></script>
 </body>
 </html>

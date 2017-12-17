@@ -4,17 +4,13 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Role extends Model
+class Email extends Model
 {
     protected $fillable = [
-        'name', 'slug'
+        'email'
     ];
+
     protected $hidden = [
         'id', 'created_at', 'updated_at'
     ];
-
-    public function userRole()
-    {
-        return $this->hasMany('App\User', 'slug', 'role_id');
-    }
 }
